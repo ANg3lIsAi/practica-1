@@ -12,6 +12,13 @@ typedef struct listaaux {
     int numero, posicion1, posicion2;
 } listaaux;
 
+void liberarmemoria(){
+    if (lista!= NULL){
+        free(lista);
+        lista = NULL;
+    }
+}
+
 void parametros() {
     BorrarPantalla();
     MoverCursor(27,0);
@@ -32,7 +39,8 @@ void parametros() {
 int pares() {
     srand(time(NULL));
     listaaux** aux = NULL;
-
+    liberarmemoria();
+    total =0;
     parametros();
 
     // Llenar la lista con numeros aleatorios
