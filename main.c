@@ -5,6 +5,9 @@
 #include "./fibonacci.h"
 #include "./pares.h"
 
+//compilacion   gcc pares.c fibonacci.c main.c -c
+//              gcc main.o pares.o fibonacci.o presentacionWin.o -o main
+
 int seleccion;
 //posicion dentro del arreglo en la que se esta
 int posicion =0;
@@ -28,28 +31,26 @@ void menu(){
 
 int main(){
     srand(time(NULL));
-    menu();
-    switch (seleccion)
-    {
-    case 1:
-        printf("1");
-        EsperarMiliSeg(5000);
-        pares();
+    do{
         menu();
+        switch (seleccion){
+        case 1:
+            pares();
+            break;
+        case 2:
+            fibonacci();
+            break;
+        
+        case 3:
+        BorrarPantalla();
         break;
-    case 2:
-        fibonacci();
-        menu();
-        break;
-    
-    case 3:
-    return 0;
-    BorrarPantalla();
-    break;
 
-    default:
-        menu();
-        break;
-    }
+        default:
+            printf("Opcion no valida. Presione Enter para continuar...\n");
+            getchar();
+            getchar();
+            break;
+        }
+    }while(seleccion != 3);
     return 0;
 }

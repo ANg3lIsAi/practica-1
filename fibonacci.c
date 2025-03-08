@@ -19,7 +19,7 @@ void datos(void){
 void encontrarDivisores(int a, int b, int divisor){
     if(divisor ==0) return;
     if(a % divisor ==0 && b % divisor ==0){
-        printf("%d", divisor);
+        printf("%d ", divisor);
     }
     encontrarDivisores(a ,b, divisor -1);
 }
@@ -28,7 +28,6 @@ int fibonacci(){
     datos();
     int menor = (a<b)? a:b;
     printf("Los divisores comunes de %d y %d son: ",a,b);
-    printf("\n%d\n",menor);
     encontrarDivisores(a,b,menor);
     printf("\n");
     EsperarMiliSeg(5000);

@@ -4,80 +4,89 @@
 #include "./pares.h"
 #include <time.h>
 
+int n, a, total = 0;
+int* lista = NULL;
 
-int* arreglo = NULL;
-int n;
-
-//lista de numeros consultados con su par
-typedef struct listaaux
-{
+// Estructura para guardar los pares encontrados
+typedef struct listaaux {
     int numero, posicion1, posicion2;
-}listaaux;
+} listaaux;
 
-void parametros(){
+void parametros() {
     BorrarPantalla();
-    printf("Ingrese el tamaño del la lista a usar: ");
-    scanf("%d", &n);
-    // lista de tamaño n
-    arreglo = (int*)realloc(arreglo, n * sizeof(int));
-    if (arreglo == NULL){
-        printf("Error al asignar memoria.\n");
+    MoverCursor(27,0);
+    printf("Parametros\n");
+    printf("Ingrese el tamanio de la lista a usar: ");
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        printf("Tamanio no valido, saliendo...\n");
+        exit(1);
+    }
+
+    lista = (int*)realloc(lista, n * sizeof(int));
+    if (lista == NULL) {
+        printf("Error al asignar memoria para la lista\n");
         exit(1);
     }
 }
 
-int blineal(int aux, listaaux **lista, int n, int y){
-    for (int i =0; i<n;i++){
-        if (lista[i] && aux==lista[i]->numero){
-            return 0;//ya fue procesado
-        }
-    }
-    for(int i = y;i<n;i++){
-        if (aux == arreglo[i] && i != y){
-            lista[y] = (listaaux*)malloc(sizeof(listaaux));
-            lista[y]->numero = aux;
-            lista[y]->posicion1 = y;
-            lista[y]->posicion2 = i;
-            return 1; //par encontrado y agregado a la lista de procesados
-        }
-    }
-    return 0;   
-}
+int pares() {
+    srand(time(NULL));
+    listaaux** aux = NULL;
 
-void resultados(listaaux **lista){
-    EsperarMiliSeg(5000);
-    BorrarPantalla();
-    MoverCursor(11, 0);
-    printf("Resultads/n");
-    for(int i =0; i<n; i++){
-        if (lista[i]){
-            printf("\n[%d] [%d] [%d]", lista[i]->numero, lista[i]->posicion1, lista[i]->posicion2);
-        }
-    }
-}
-
-int pares(){
     parametros();
-    int aux;
-    listaaux **lista = (listaaux**)malloc(n * sizeof(listaaux*));
-    if (lista == NULL){
-        printf("Error al asignar memoria.\n");
-        return 1;
+
+    // Llenar la lista con numeros aleatorios
+    for (int i = 0; i < n; i++) {
+        lista[i] = rand() % ((3 * n) + 1);
+        printf("posicion %d, numero %d\n", i, lista[i]);
     }
-    // asignacion de numeros aleatorias dentro de la lista de tamaño n
-    for (int i=0; i<n; i++){
-        arreglo[i] = (rand()%(3 * n +1));
-        printf("%d\n",arreglo[i]);
+
+    EsperarMiliSeg(5000);
+    // Buscar pares en la lista
+    for (int i = 0; i < n; i++) {
+        a = lista[i];
+        for (int k = i + 1; k < n; k++) {
+            if (a == lista[k]) {
+                aux = (listaaux**)realloc(aux, (total + 1) * sizeof(listaaux*));
+                if (aux == NULL) {
+                    printf("Error al aumentar lista de numeros encontrados\n");
+                    exit(1);
+                }
+
+                aux[total] = (listaaux*)malloc(sizeof(listaaux));
+                if (aux[total] == NULL) {
+                    printf("Error al asignar memoria para struct\n");
+                    exit(1);
+                }
+
+                aux[total]->numero = a;
+                aux[total]->posicion1 = i;
+                aux[total]->posicion2 = k;
+                total++;
+            }
+        }
     }
-    // busqueda de pares de numeros de la lista
-    for (int y=0; y<n; y++){
-        aux = arreglo[y];
-        blineal(aux, lista, n, y);
+
+    // Mostrar resultados
+    printf("\nResultados\n");
+    if (total == 0) {
+        printf("Ningun numero resulto repetido.\n");
+    } else {
+        for (int i = 0; i < total; i++) {
+            printf("[%d] [%d] [%d]\n", aux[i]->numero, aux[i]->posicion1, aux[i]->posicion2);
+        }
+    printf("Pares encontrados: %d\n",total);
+    printf("Presiona Enter para continuar...\n");
+    while (getchar() != '\n'); // Limpia el búfer
+    getchar(); // Espera la tecla Enter
     }
-    resultados(lista);
-    for (int i=0; i<n; i++){
-        free(lista[i]);
+
+    // Liberar memoria
+    for (int i = 0; i < total; i++) {
+        free(aux[i]);
     }
-    free (lista);
+    free(aux);
+    free(lista);
+
     return 0;
 }
